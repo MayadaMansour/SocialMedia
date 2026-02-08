@@ -11,10 +11,10 @@ import NotFound from "./pages/NotFound";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     element: <AuthLayout />,
     children: [
-      { index: true, element: <SignUp /> },
+      {  path: "signup", element: <SignUp /> },
       { path: "signin", element: <SignIn /> },
     ],
   },
