@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import { ToastProvider } from "@heroui/react";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <HeroUIProvider>
+        <ToastProvider />
       <RouterProvider router={router} />
     </HeroUIProvider>
   );
