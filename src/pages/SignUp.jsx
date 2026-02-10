@@ -12,185 +12,117 @@ import {
 } from "@heroui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+
 import { EyeSlashFilledIcon } from "../componant/password/EyeSlashFilledIcon";
 import { EyeFilledIcon } from "../componant/password/EyeFilledIcon";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { schema } from "../validation/schema";
-import { getInputProps } from "../helpers/authHelper";
-import { getSelectProps } from "../helpers/authHelper";
-import axios from "axios";
-import SignIn from "./SignIn";
+import { getInputProps, getSelectProps } from "../helpers/authHelper";
+
+import authSideImage from "../assets/login.webp";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     mode: "onTouched",
     resolver: zodResolver(schema),
   });
 
-  async function signUp(registerData) {
+  async function signUp(data) {
     setIsLoading(true);
     setErrorMsg("");
     try {
-      const { data } = await axios.post(
+      await axios.post(
         "https://linked-posts.routemisr.com/users/signup",
-        registerData,
+        data
       );
+
       addToast({
-        title: "Sucess",
-        description: "Account Created successfully",
+        title: "Success",
+        description: "Account created successfully",
         color: "success",
       });
+
       navigate("/signin");
-      console.log(data);
     } catch (error) {
-      setErrorMsg(
-        error.response?.data?.error || "Something went wrong, try again",
-      );
+      setErrorMsg(error.response?.data?.error || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <div className="p-6 sm:p-10">
-      <Card className="bg-transparent shadow-none">
-        <CardHeader className="flex flex-col gap-1 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">
-            Create Account ✨
-          </h1>
-          <p className="text-sm text-gray-600">
-            Join us and start your journey
-          </p>
-        </CardHeader>
+    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl shadow-2xl">
 
-        <CardBody>
-          <form className="space-y-5" onSubmit={handleSubmit(signUp)}>
-            <Input
-              {...getInputProps({
-                name: "name",
-                label: "Full Name",
-                placeholder: "John Doe",
-                errors,
-              })}
-              {...register("name")}
-            />
-            <Input
-              {...getInputProps({
-                name: "email",
-                label: "Email",
-                type: "email",
-                placeholder: "you@example.com",
-                errors,
-              })}
-              {...register("email")}
-            />
-            <Input
-              {...getInputProps({
+      <div
+        className="hidden md:flex bg-cover bg-center"
+        style={{ backgroundImage: `url(${authSideImage})` }}
+      />
+
+      <div className="p-6 sm:p-10 flex items-center justify-center">
+        <Card className="bg-transparent shadow-none w-full max-w-md">
+          <CardHeader className="text-center mb-4">
+            <h1 className="text-3xl font-extrabold text-white">Create Account</h1>
+            <p className="text-sm text-gray-300">It’s quick and easy</p>
+          </CardHeader>
+
+          <CardBody>
+            <form className="space-y-4" onSubmit={handleSubmit(signUp)}>
+
+              <Input {...getInputProps({ name: "name", label: "Full Name", errors })} {...register("name")} />
+              <Input {...getInputProps({ name: "email", label: "Email", type: "email", errors })} {...register("email")} />
+
+              <Input {...getInputProps({
                 name: "password",
                 label: "Password",
                 type: showPassword ? "text" : "password",
-                placeholder: "••••••••",
                 errors,
                 endContent: (
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((p) => !p)}
-                  >
-                    {showPassword ? (
-                      <EyeSlashFilledIcon className="text-xl text-default-400" />
-                    ) : (
-                      <EyeFilledIcon className="text-xl text-default-400" />
-                    )}
+                  <button type="button" onClick={() => setShowPassword(p => !p)}>
+                    {showPassword ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
                   </button>
                 ),
-              })}
-              {...register("password")}
-            />
-            <Input
-              {...getInputProps({
+              })} {...register("password")} />
+
+              <Input {...getInputProps({
                 name: "rePassword",
                 label: "Confirm Password",
                 type: showConfirmPassword ? "text" : "password",
-                placeholder: "••••••••",
                 errors,
                 endContent: (
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword((p) => !p)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeSlashFilledIcon className="text-xl text-default-400" />
-                    ) : (
-                      <EyeFilledIcon className="text-xl text-default-400" />
-                    )}
+                  <button type="button" onClick={() => setShowConfirmPassword(p => !p)}>
+                    {showConfirmPassword ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
                   </button>
                 ),
-              })}
-              {...register("rePassword")}
-            />
-            <Input
-              {...getInputProps({
-                name: "dateOfBirth",
-                label: "Date of Birth",
-                type: "date",
-                errors,
-              })}
-              {...register("dateOfBirth")}
-            />
-            <Select
-              {...getSelectProps({
-                name: "gender",
-                label: "Gender",
-                errors,
-              })}
-              {...register("gender")}
-            >
-              <SelectItem key="male" value="male">
-                Male
-              </SelectItem>
-              <SelectItem key="female" value="female">
-                Female
-              </SelectItem>
-            </Select>
+              })} {...register("rePassword")} />
 
-            <Button
-              isLoading={isLoading}
-              type="submit"
-              color="primary"
-              size="lg"
-              className="w-full"
-            >
-              Sign Up
-            </Button>
+              <Input {...getInputProps({ name: "dateOfBirth", label: "Date of Birth", type: "date", errors })} {...register("dateOfBirth")} />
 
-            <p className="text-center text-sm text-gray-600">
-              Already have an account?
-              <Link to="/signin" className="text-primary hover:underline">
-                Sign in
-              </Link>
-            </p>
-            {errorMsg && (
-              <Alert
-                color="danger"
-                variant="flat"
-                className={{ base: "capitalize" }}
-              >
-                {errorMsg}
-              </Alert>
-            )}
-          </form>
-        </CardBody>
-      </Card>
+              <Select {...getSelectProps({ name: "gender", label: "Gender", errors })} {...register("gender")}>
+                <SelectItem key="male">Male</SelectItem>
+                <SelectItem key="female">Female</SelectItem>
+              </Select>
+
+              <Button isLoading={isLoading} type="submit" radius="full" size="lg" className="w-full bg-primary text-white">
+                Sign Up
+              </Button>
+
+              <p className="text-center text-sm text-gray-300">
+                Already have an account? <Link to="/signin" className="text-primary hover:underline">Sign in</Link>
+              </p>
+
+              {errorMsg && <Alert className="bg-red-500/10 border border-red-500/30 text-red-400">{errorMsg}</Alert>}
+            </form>
+          </CardBody>
+        </Card>
+      </div>
     </div>
   );
 }

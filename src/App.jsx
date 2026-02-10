@@ -1,26 +1,27 @@
 import "./App.css";
 import { HeroUIProvider } from "@heroui/system";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainLayout from "./layout/MainLayout";
+import { ToastProvider } from "@heroui/react";
+
 import AuthLayout from "./layout/AuthLayout";
-import SignIn from "./pages/SignIn";
+import MainLayout from "./layout/MainLayout";
+
 import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import { ToastProvider } from "@heroui/react";
 
 const router = createBrowserRouter([
   {
-    path: "",
     element: <AuthLayout />,
     children: [
-      {  path: "signup", element: <SignUp /> },
-      { path: "signin", element: <SignIn /> },
+      { path: "/signup", element: <SignUp /> },
+      { path: "/signin", element: <SignIn /> },
     ],
   },
   {
-    path: " ",
+    path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Feed /> },
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <HeroUIProvider>
-        <ToastProvider />
+      <ToastProvider />
       <RouterProvider router={router} />
     </HeroUIProvider>
   );

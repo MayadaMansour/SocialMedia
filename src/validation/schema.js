@@ -1,6 +1,6 @@
 import { regex } from "../validation/regex";
 import * as zod from "zod";
-import { isAdult } from "../validation/age";
+import { isAdult } from "../validation/birthdata";
 
 
 

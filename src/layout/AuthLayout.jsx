@@ -1,22 +1,16 @@
-import SignUp from "./../pages/SignUp";
+import { Outlet } from "react-router-dom";
 import bgImage from "../assets/bg.jpg";
 
 export default function AuthLayout() {
   return (
-        <div className="relative z-10 w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden">
-
     <div
-      className="min-h-screen flex items-center justify-center px-4 bg-cover bg-center relative"
+      className="min-h-screen w-full flex items-center justify-center bg-cover bg-center relative px-4"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
-
-      {/* Content */}
-      <div className="relative z-10 w-full">
-        <SignUp />
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="relative z-10 w-full flex justify-center">
+        <Outlet />
       </div>
-    </div>
     </div>
   );
 }
