@@ -17,6 +17,7 @@ import { EyeFilledIcon } from "../componant/password/EyeFilledIcon";
 import { getInputProps } from "../helpers/authHelper";
 
 import authSideImage from "../assets/login.webp";
+import { useAuth } from "../context/AuthProvider";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,34 +25,42 @@ export default function SignIn() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  async function signIn(loginData) {
-    setIsLoading(true);
-    setErrorMsg("");
-    try {
-      const {data} = await axios.post(
-        "https://linked-posts.routemisr.com/users/signin",
-        loginData
-      );
-      // localStorage.setItem("token", response.data.token);
-      localStorage.token =data.token;
-      addToast({
-        title: "Success",
-        description: "Logged in successfully",
-        color: "success",
-      });
-      navigate("/");
-    } catch {
-      setErrorMsg("Invalid email or password");
-    } finally {
-      setIsLoading(false);
-    }
+async function signIn(loginData) {
+  setIsLoading(true);
+  setErrorMsg("");
+
+  try {
+    const response = await axios.post(
+      "https://route-posts.routemisr.com/users/signin",
+      loginData
+    );
+
+    console.log("FULL RESPONSE:", response.data);
+    const token = response.data.data.token;
+    localStorage.setItem("token", token);
+    console.log("Saved token:", localStorage.getItem("token"));
+    addToast({
+      title: "Success",
+      description: "Logged in successfully",
+      color: "success",
+    });
+    navigate("/");
+  } catch (error) {
+    setErrorMsg(error?.response?.data?.error || "Invalid email or password");
+  } finally {
+    setIsLoading(false);
   }
+}
+
 
   return (
     <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl shadow-2xl">
-
       <div
         className="hidden md:flex bg-cover bg-center"
         style={{ backgroundImage: `url(${authSideImage})` }}
@@ -60,33 +69,66 @@ export default function SignIn() {
       <div className="p-6 sm:p-10 flex items-center justify-center">
         <Card className="bg-transparent shadow-none w-full max-w-md">
           <CardHeader className="text-center mb-4">
-            <h1 className="text-3xl font-extrabold text-white">Welcome Back 👋</h1>
+            <h1 className="text-3xl font-extrabold text-white">
+              Welcome Back 👋
+            </h1>
           </CardHeader>
 
           <CardBody>
             <form className="space-y-4" onSubmit={handleSubmit(signIn)}>
-              <Input {...getInputProps({ name: "email", label: "Email", type: "email", errors })} {...register("email")} />
-              <Input {...getInputProps({
-                name: "password",
-                label: "Password",
-                type: showPassword ? "text" : "password",
-                errors,
-                endContent: (
-                  <button type="button" onClick={() => setShowPassword(p => !p)}>
-                    {showPassword ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
-                  </button>
-                ),
-              })} {...register("password")} />
+              <Input
+                {...getInputProps({
+                  name: "email",
+                  label: "Email",
+                  type: "email",
+                  errors,
+                })}
+                {...register("email")}
+              />
+              <Input
+                {...getInputProps({
+                  name: "password",
+                  label: "Password",
+                  type: showPassword ? "text" : "password",
+                  errors,
+                  endContent: (
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                    >
+                      {showPassword ? (
+                        <EyeSlashFilledIcon />
+                      ) : (
+                        <EyeFilledIcon />
+                      )}
+                    </button>
+                  ),
+                })}
+                {...register("password")}
+              />
 
-              <Button isLoading={isLoading} type="submit" radius="full" size="lg" className="w-full bg-primary text-white">
+              <Button
+                isLoading={isLoading}
+                type="submit"
+                radius="full"
+                size="lg"
+                className="w-full bg-primary text-white"
+              >
                 Sign In
               </Button>
 
               <p className="text-center text-sm text-gray-300">
-                Don’t have an account? <Link to="/signup" className="text-primary hover:underline">Sign up</Link>
+                Don’t have an account?{" "}
+                <Link to="/signup" className="text-primary hover:underline">
+                  Sign up
+                </Link>
               </p>
 
-              {errorMsg && <Alert className="bg-red-500/10 border border-red-500/30 text-red-400">{errorMsg}</Alert>}
+              {errorMsg && (
+                <Alert className="bg-red-500/10 border border-red-500/30 text-red-400">
+                  {errorMsg}
+                </Alert>
+              )}
             </form>
           </CardBody>
         </Card>

@@ -40,7 +40,7 @@ export default function SignUp() {
     setErrorMsg("");
     try {
       await axios.post(
-        "https://linked-posts.routemisr.com/users/signup",
+        "https://route-posts.routemisr.com/users/signup",
         data
       );
 
@@ -62,13 +62,13 @@ export default function SignUp() {
     <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl shadow-2xl">
 
       <div
-        className="hidden md:flex bg-cover bg-center"
-        style={{ backgroundImage: `url(${authSideImage})` }}
+        className="hidden md:flex bg-cover bg-center "
+        style={{ backgroundImage: `url(${authSideImage}) ` }}
       />
 
       <div className="p-6 sm:p-10 flex items-center justify-center">
         <Card className="bg-transparent shadow-none w-full max-w-md">
-          <CardHeader className="text-center mb-4">
+          <CardHeader className="text-center mb-4 ">
             <h1 className="text-3xl font-extrabold text-white">Create Account</h1>
             <p className="text-sm text-gray-300">It’s quick and easy</p>
           </CardHeader>
