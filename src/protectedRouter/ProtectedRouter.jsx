@@ -1,7 +1,10 @@
 import { Navigate } from "react-router-dom";
+import { authContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 export default function ProtectedRouter({ children }) {
-  const token = localStorage.getItem("token"); 
+  const { token } = useContext(authContext);
+  const isLoggedIn = !!token;
 
-  return token ? children : <Navigate to="/signin" replace />;
+  return isLoggedIn ? children : <Navigate to={"/signin"} />;
 }

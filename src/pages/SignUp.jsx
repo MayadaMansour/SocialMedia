@@ -30,7 +30,11 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: "onTouched",
     resolver: zodResolver(schema),
   });
@@ -39,10 +43,7 @@ export default function SignUp() {
     setIsLoading(true);
     setErrorMsg("");
     try {
-      await axios.post(
-        "https://route-posts.routemisr.com/users/signup",
-        data
-      );
+      await axios.post("https://route-posts.routemisr.com/users/signup", data);
 
       addToast({
         title: "Success",
@@ -60,65 +61,125 @@ export default function SignUp() {
 
   return (
     <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl shadow-2xl">
-
-      <div
-        className="hidden md:flex bg-cover bg-center "
-        style={{ backgroundImage: `url(${authSideImage}) ` }}
-      />
+      <div className="hidden md:flex items-center justify-center p-6">
+        <div
+          className="w-full max-w-[550px] h-[550px] rounded-2xl bg-cover bg-center"
+          style={{ backgroundImage: `url(${authSideImage})` }}
+        />
+      </div>
 
       <div className="p-6 sm:p-10 flex items-center justify-center">
-        <Card className="bg-transparent shadow-none w-full max-w-md">
-          <CardHeader className="text-center mb-4 ">
-            <h1 className="text-3xl font-extrabold text-white">Create Account</h1>
-            <p className="text-sm text-gray-300">It’s quick and easy</p>
+        <Card className="bg-transparent shadow-none w-full max-w-md ">
+          <CardHeader className="mb-2 flex flex-col items-center gap-2">
+            <h1 className="text-4xl font-extrabold text-white text-center">
+              Create Account ✨
+            </h1>
+
+            <p className="text-sm text-gray-300 text-center">
+              Join us and start sharing moments
+            </p>
           </CardHeader>
 
           <CardBody>
             <form className="space-y-4" onSubmit={handleSubmit(signUp)}>
+              <Input
+                {...getInputProps({ name: "name", label: "Full Name", errors })}
+                {...register("name")}
+              />
+              <Input
+                {...getInputProps({
+                  name: "email",
+                  label: "Email",
+                  type: "email",
+                  errors,
+                })}
+                {...register("email")}
+              />
 
-              <Input {...getInputProps({ name: "name", label: "Full Name", errors })} {...register("name")} />
-              <Input {...getInputProps({ name: "email", label: "Email", type: "email", errors })} {...register("email")} />
+              <Input
+                {...getInputProps({
+                  name: "password",
+                  label: "Password",
+                  type: showPassword ? "text" : "password",
+                  errors,
+                  endContent: (
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                    >
+                      {showPassword ? (
+                        <EyeSlashFilledIcon />
+                      ) : (
+                        <EyeFilledIcon />
+                      )}
+                    </button>
+                  ),
+                })}
+                {...register("password")}
+              />
 
-              <Input {...getInputProps({
-                name: "password",
-                label: "Password",
-                type: showPassword ? "text" : "password",
-                errors,
-                endContent: (
-                  <button type="button" onClick={() => setShowPassword(p => !p)}>
-                    {showPassword ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
-                  </button>
-                ),
-              })} {...register("password")} />
+              <Input
+                {...getInputProps({
+                  name: "rePassword",
+                  label: "Confirm Password",
+                  type: showConfirmPassword ? "text" : "password",
+                  errors,
+                  endContent: (
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((p) => !p)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeSlashFilledIcon />
+                      ) : (
+                        <EyeFilledIcon />
+                      )}
+                    </button>
+                  ),
+                })}
+                {...register("rePassword")}
+              />
 
-              <Input {...getInputProps({
-                name: "rePassword",
-                label: "Confirm Password",
-                type: showConfirmPassword ? "text" : "password",
-                errors,
-                endContent: (
-                  <button type="button" onClick={() => setShowConfirmPassword(p => !p)}>
-                    {showConfirmPassword ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
-                  </button>
-                ),
-              })} {...register("rePassword")} />
+              <Input
+                {...getInputProps({
+                  name: "dateOfBirth",
+                  label: "Date of Birth",
+                  type: "date",
+                  errors,
+                })}
+                {...register("dateOfBirth")}
+              />
 
-              <Input {...getInputProps({ name: "dateOfBirth", label: "Date of Birth", type: "date", errors })} {...register("dateOfBirth")} />
-
-              <Select {...getSelectProps({ name: "gender", label: "Gender", errors })} {...register("gender")}>
+              <Select
+                {...getSelectProps({ name: "gender", label: "Gender", errors })}
+                {...register("gender")}
+              >
                 <SelectItem key="male">Male</SelectItem>
                 <SelectItem key="female">Female</SelectItem>
               </Select>
 
-              <Button isLoading={isLoading} type="submit" radius="full" size="lg" className="w-full bg-primary text-white">
+              <Button
+                isLoading={isLoading}
+                type="submit"
+                radius="full"
+                size="lg"
+                className="w-full bg-primary text-white"
+              >
                 Sign Up
               </Button>
 
               <p className="text-center text-sm text-gray-300">
-                Already have an account? <Link to="/signin" className="text-primary hover:underline">Sign in</Link>
+                Already have an account?{" "}
+                <Link to="/signin" className="text-primary-700 hover:underline">
+                  Sign in
+                </Link>
               </p>
 
-              {errorMsg && <Alert className="bg-red-500/10 border border-red-500/30 text-red-400">{errorMsg}</Alert>}
+              {errorMsg && (
+                <Alert className="bg-red-500/10 border border-red-500/30 text-red-400">
+                  {errorMsg}
+                </Alert>
+              )}
             </form>
           </CardBody>
         </Card>

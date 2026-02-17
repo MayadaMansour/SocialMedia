@@ -80,7 +80,7 @@ export default function CreatePost({ onPostCreated }) {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="What's on your mind, Mayada?"
-        className="w-full min-h-[120px] resize-none outline-none text-lg placeholder-gray-400"
+        className="w-full min-h-[50px] resize-none outline-none text-lg placeholder-gray-400"
       />
 
       {/* IMAGE PREVIEW */}

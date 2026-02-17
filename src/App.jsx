@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRouter from "./protectedRouter/ProtectedRouter";
 import ProtectedAuthRouter from "./protectedRouter/ProtectedAuthRouter";
+import AuthContextProvider from "./context/AuthContext";
 
 const router = createBrowserRouter([
   {
@@ -61,9 +62,11 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <HeroUIProvider>
-      <ToastProvider />
-      <RouterProvider router={router} />
-    </HeroUIProvider>
+    <AuthContextProvider>
+      <HeroUIProvider>
+        <ToastProvider />
+        <RouterProvider router={router} />
+      </HeroUIProvider>
+    </AuthContextProvider>
   );
 }

@@ -8,12 +8,19 @@ import {
   DropdownMenu,
   Avatar,
 } from "@heroui/react";
-import { Link } from "react-router-dom";
-import SignIn from './../pages/SignIn';
-import Profile from './../pages/Profile';
+import { Link} from "react-router-dom";
+import { useContext } from "react";
+import { authContext } from "../context/AuthContext";
 
 export default function NavbarSection() {
-  return (
+  const { setUserToken } = useContext(authContext);
+
+  function logout() {
+    localStorage.removeItem("token");
+    setUserToken(null);
+  }
+
+   return (
     <Navbar>
       <NavbarBrand>
         <Link to={"/"}>
@@ -42,7 +49,7 @@ export default function NavbarSection() {
              </Link>
             </DropdownItem>
             <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="logout" color="danger">
+            <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>
           </DropdownMenu>

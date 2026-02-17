@@ -8,7 +8,7 @@ import {
   Alert,
   addToast,
 } from "@heroui/react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
@@ -17,48 +17,46 @@ import { EyeFilledIcon } from "../componant/password/EyeFilledIcon";
 import { getInputProps } from "../helpers/authHelper";
 
 import authSideImage from "../assets/login.webp";
-import { useAuth } from "../context/AuthProvider";
+import { useContext } from "react";
+import { authContext } from "../context/AuthContext";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const { setUserToken } = useContext(authContext);
 
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-async function signIn(loginData) {
-  setIsLoading(true);
-  setErrorMsg("");
+  async function signIn(loginData) {
+    setIsLoading(true);
+    setErrorMsg("");
+    try {
+      const response = await axios.post(
+        "https://route-posts.routemisr.com/users/signin",
+        loginData,
+      );
 
-  try {
-    const response = await axios.post(
-      "https://route-posts.routemisr.com/users/signin",
-      loginData
-    );
-
-    console.log("FULL RESPONSE:", response.data);
-    const token = response.data.data.token;
-    localStorage.setItem("token", token);
-    console.log("Saved token:", localStorage.getItem("token"));
-    addToast({
-      title: "Success",
-      description: "Logged in successfully",
-      color: "success",
-    });
-    navigate("/");
-  } catch (error) {
-    setErrorMsg(error?.response?.data?.error || "Invalid email or password");
-  } finally {
-    setIsLoading(false);
+      console.log("FULL RESPONSE:", response.data);
+      const token = response.data.data.token;
+      localStorage.setItem("token", token);
+      console.log("Saved token:", localStorage.getItem("token"));
+      setUserToken(token);
+      addToast({
+        title: "Success",
+        description: "Logged in successfully",
+        color: "success",
+      });
+    } catch (error) {
+      setErrorMsg(error?.response?.data?.error || "Invalid email or password");
+    } finally {
+      setIsLoading(false);
+    }
   }
-}
-
-
   return (
     <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl shadow-2xl">
       <div
@@ -68,10 +66,14 @@ async function signIn(loginData) {
 
       <div className="p-6 sm:p-10 flex items-center justify-center">
         <Card className="bg-transparent shadow-none w-full max-w-md">
-          <CardHeader className="text-center mb-4">
-            <h1 className="text-3xl font-extrabold text-white">
+          <CardHeader className="mb-2 flex flex-col items-center gap-2">
+            <h1 className="text-4xl font-extrabold text-white text-center">
               Welcome Back 👋
             </h1>
+
+            <p className="text-sm text-gray-300 text-center">
+              Log in to your Account
+            </p>
           </CardHeader>
 
           <CardBody>
@@ -119,7 +121,7 @@ async function signIn(loginData) {
 
               <p className="text-center text-sm text-gray-300">
                 Don’t have an account?{" "}
-                <Link to="/signup" className="text-primary hover:underline">
+                <Link to="/signup" className="text-primary-700 hover:underline">
                   Sign up
                 </Link>
               </p>
