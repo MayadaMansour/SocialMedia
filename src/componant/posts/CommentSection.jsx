@@ -1,55 +1,39 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-export default function CommentSection({ postId, totalComments }) {
+export default function CommentSection({ postId, totalComments, showAll }) {
   const [comments, setComments] = useState([]);
-  const [text, setText] = useState("");
   const token = localStorage.getItem("token");
 
-  async function loadInitialComments() {
+  async function loadComments() {
     try {
       const { data } = await axios.get(
-        `https://route-posts.routemisr.com/posts/${postId}/comments?page=1&limit=2`,
-        { headers: { token } },
+        `https://route-posts.routemisr.com/posts/${postId}/comments?page=1&limit=10`,
+        { headers: { token } }
       );
       setComments(data.data.comments);
     } catch (err) {
       console.log(err);
     }
   }
+
   useEffect(() => {
-    loadInitialComments();
-  }, []);
+    loadComments();
+  }, [postId]);
 
   return (
     <div className="px-4 pb-3">
-      <div className="my-5">
-        <div className="relative">
-          <input
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Write a comment..."
-            className="w-full bg-gray-100 rounded-medium px-4 pr-12 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 
-                 text-blue-500
-                 w-15 h-15  flex items-center justify-center
-                 transition"
-          >
-            ➤
-          </button>
-        </div>
-      </div>
 
       {/* COMMENTS */}
       <div className="space-y-2 mb-2">
-        {comments.map((c) => (
+        {(showAll ? comments : comments.slice(0, 2)).map((c) => (
           <div key={c._id} className="flex gap-2">
             <img
-              src={c.commentCreator?.photo}
-              className="w-7 h-7 rounded-full"
+              src={c.commentCreator?.photo || "https://i.pravatar.cc/150"}
+              className="w-7 h-7 rounded-full object-cover"
             />
+
             <div className="bg-gray-100 rounded-2xl px-3 py-2 text-sm">
               <span className="font-semibold block">
                 {c.commentCreator?.name}
@@ -61,11 +45,15 @@ export default function CommentSection({ postId, totalComments }) {
       </div>
 
       {/* SEE MORE */}
-      {totalComments > 2 ? (
-        <button className="text-sm text-gray-500 hover:underline mb-2 m-auto">
+      {!showAll && comments.length > 2 && (
+        <Link
+          to={`/post/${postId}`}
+          className="text-sm text-gray-500 hover:underline block"
+        >
           See more comments
-        </button>
-      ) : null}
+        </Link>
+      )}
     </div>
   );
 }
+

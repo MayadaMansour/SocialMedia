@@ -3,9 +3,9 @@ import { FaHeart } from "react-icons/fa";
 import { FaRegCommentDots } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, showAllComments }) {
   return (
-    <div className="bg-white rounded-xl shadow w-full max-w-2xl overflow-hidden">
+    <div className="bg-white rounded-xl shadow w-full   max-w-2xl overflow-hidden">
       {/* HEADER */}
       <div className="flex items-center gap-3 p-4">
         <img
@@ -55,8 +55,29 @@ export default function PostCard({ post }) {
         </div>
       </div>
 
+      {/* ADD COMMENT BOX */}
+      <div className="px-4 py-4">
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            placeholder="Write a comment..."
+            className="w-full bg-gray-100 rounded-full pl-4 pr-12 py-2 outline-none text-sm"
+          />
+
+          <button
+            className="absolute right-2 text-primary 
+                 w-8 h-8 rounded-full flex items-center justify-center"
+          >
+            ➤
+          </button>
+        </div>
+      </div>
       {/* COMMENTS */}
-      <CommentSection postId={post._id} totalComments={post.commentsCount} />
+      <CommentSection
+        postId={post._id}
+        totalComments={post.commentsCount}
+        showAll={showAllComments}
+      />
     </div>
   );
 }

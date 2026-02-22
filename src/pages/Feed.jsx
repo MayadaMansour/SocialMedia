@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Posts from "../componant/posts/Posts";
 import CreatePost from "../componant/posts/CreatePost";
+import Loading from "../componant/Loading";
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -30,13 +31,12 @@ export default function Feed() {
     }
   }
 
-  
   if (loading) {
-    return <p className="text-center text-gray-400 mt-10">Loading posts...</p>;
+    return <Loading />;
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 ">
+    <div className="flex flex-col items-center gap-4  ">
       <CreatePost
         onPostCreated={(newPost) => setPosts((prev) => [newPost, ...prev])}
       />

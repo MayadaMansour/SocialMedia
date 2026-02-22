@@ -1,14 +1,16 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import axios from "axios";
+import { authContext } from "../../context/AuthContext";
 
-export default function CreatePost({ onPostCreated }) {
+export default function CreatePost({ onPostCreated, user }) {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+    const { token } = useContext(authContext);
+  
 
-  const fileRef = useRef();
-  const token = localStorage.getItem("token");
+  const fileRef = useRef(null);
 
   // upload image
   function handleImage(e) {
@@ -22,7 +24,7 @@ export default function CreatePost({ onPostCreated }) {
   function removeImage() {
     setImage(null);
     setPreview(null);
-    fileRef.current.value = "";
+    if (fileRef.current) fileRef.current.value = "";
   }
 
   // submit
@@ -31,7 +33,6 @@ export default function CreatePost({ onPostCreated }) {
 
     try {
       setLoading(true);
-
       const formData = new FormData();
       formData.append("body", text);
       if (image) formData.append("image", image);
@@ -41,33 +42,38 @@ export default function CreatePost({ onPostCreated }) {
         formData,
         {
           headers: {
-            token,
-            "Content-Type": "multipart/form-data",
+            token, 
           },
-        },
+        }
       );
 
       setText("");
       removeImage();
-      onPostCreated?.(data.data);
+      onPostCreated?.(data?.data?.post);
     } catch (err) {
-      console.log(err);
+      console.log(err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
   }
 
+  const isDisabled = !text.trim() && !image;
+
   return (
     <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4">
+      
       {/* HEADER */}
       <div className="flex items-center gap-3 mb-3">
         <img
-          src="https://i.pravatar.cc/40"
-          className="w-11 h-11 rounded-full"
+          src={user?.photo || "https://i.pravatar.cc/150"}
+          alt="user"
+          className="w-11 h-11 rounded-full object-cover"
         />
 
         <div>
-          <p className="font-semibold">Mayada Mansour</p>
+          <p className="font-semibold">
+            {user?.name || "User"}
+          </p>
 
           <div className="bg-gray-100 text-sm px-3 py-1 rounded-full inline-flex items-center gap-1 cursor-pointer hover:bg-gray-200">
             🌍 Public ▾
@@ -79,8 +85,8 @@ export default function CreatePost({ onPostCreated }) {
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="What's on your mind, Mayada?"
-        className="w-full min-h-[50px] resize-none outline-none text-lg placeholder-gray-400"
+        placeholder={`What's on your mind, ${user?.name || "Mayada"}?`}
+        className="w-full min-h-[80px] resize-none outline-none text-lg placeholder-gray-400"
       />
 
       {/* IMAGE PREVIEW */}
@@ -88,6 +94,7 @@ export default function CreatePost({ onPostCreated }) {
         <div className="relative mt-3">
           <img
             src={preview}
+            alt="preview"
             className="rounded-xl max-h-[400px] w-full object-cover"
           />
 
@@ -106,7 +113,7 @@ export default function CreatePost({ onPostCreated }) {
       <div className="flex items-center justify-between">
         <div className="flex gap-6 text-gray-600">
           <button
-            onClick={() => fileRef.current.click()}
+            onClick={() => fileRef.current?.click()}
             className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-lg"
           >
             🖼️ Photo/video
@@ -119,10 +126,10 @@ export default function CreatePost({ onPostCreated }) {
 
         <button
           onClick={handleSubmit}
-          disabled={!text.trim() && !image}
+          disabled={isDisabled || loading}
           className={`px-6 py-2 rounded-lg font-semibold flex items-center gap-2
             ${
-              !text.trim() && !image
+              isDisabled || loading
                 ? "bg-blue-200 text-white cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-600 text-white"
             }`}
