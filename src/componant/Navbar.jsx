@@ -8,26 +8,31 @@ import {
   DropdownMenu,
   Avatar,
 } from "@heroui/react";
-import { Link} from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { authContext } from "../context/AuthContext";
 
 export default function NavbarSection() {
-  const { setUserToken } = useContext(authContext);
+  const { userData, setUserToken } = useContext(authContext);
+  const navigate = useNavigate();
 
   function logout() {
     localStorage.removeItem("token");
     setUserToken(null);
+    navigate("/signin");
   }
 
-   return (
-    <Navbar>
+  return (
+    <Navbar maxWidth="xl" className="shadow-md">
+      {/* LOGO */}
       <NavbarBrand>
-        <Link to={"/"}>
-          <p className="font-bold text-inherit">CIRCLE</p>
+        <Link to="/">
+          <p className="font-bold text-xl text-primary">CIRCLE</p>
         </Link>
       </NavbarBrand>
 
+      {/* RIGHT SIDE */}
       <NavbarContent as="div" justify="end">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
@@ -36,19 +41,20 @@ export default function NavbarSection() {
               as="button"
               className="transition-transform"
               color="secondary"
-              name="Jason Hughes"
+              name={userData?.name}
               size="sm"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+              src={userData?.photo || "https://i.pravatar.cc/150"}
             />
           </DropdownTrigger>
+
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile">
-             <Link  className="h-14 " to="/profile">
-              <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
-             </Link>
+            <DropdownItem key="profile" className="h-14 gap-2">
+              <Link to="/profile">
+                <p className="font-semibold">Signed in as</p>
+                <p className="font-semibold text-primary">{userData?.email}</p>
+              </Link>
             </DropdownItem>
-            <DropdownItem key="settings">My Settings</DropdownItem>
+
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>

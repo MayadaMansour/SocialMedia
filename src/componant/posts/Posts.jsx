@@ -1,6 +1,6 @@
 import PostCard from "./PostCard";
 
-export default function Posts({ posts }) {
+export default function Posts({ posts, getPosts }) { 
   if (!posts?.length) {
     return (
       <p className="text-center text-gray-400 mt-10">
@@ -12,7 +12,11 @@ export default function Posts({ posts }) {
   return (
     <div className="min-h-screen py-10 flex flex-col items-center gap-6">
       {posts.map((post) => (
-        <PostCard key={post._id} post={post} />
+        <PostCard
+          key={post._id}
+          post={post}
+          getPosts={getPosts}   
+        />
       ))}
     </div>
   );

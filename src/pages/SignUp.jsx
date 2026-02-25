@@ -20,6 +20,7 @@ import { schema } from "../validation/schema";
 import { getInputProps, getSelectProps } from "../helpers/authHelper";
 
 import authSideImage from "../assets/login.webp";
+import { apiServices } from "../services/api";
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +28,6 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  
   const navigate = useNavigate();
 
   const {
@@ -39,21 +39,26 @@ export default function SignUp() {
     resolver: zodResolver(schema),
   });
 
-  async function signUp(data) {
+  async function signUp(formData) {
     setIsLoading(true);
     setErrorMsg("");
     try {
-      await axios.post("https://route-posts.routemisr.com/users/signup", data);
+      const response = await apiServices.signUp(formData);
+      if (response.success) {
+        addToast({
+          title: "Success ",
+          description: "Account created successfully",
+          color: "success",
+        });
 
-      addToast({
-        title: "Success",
-        description: "Account created successfully",
-        color: "success",
-      });
-
-      navigate("/signin");
+        navigate("/signin");
+      }
     } catch (error) {
-      setErrorMsg(error.response?.data?.error || "Something went wrong");
+      setErrorMsg(
+        error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Something went wrong",
+      );
     } finally {
       setIsLoading(false);
     }

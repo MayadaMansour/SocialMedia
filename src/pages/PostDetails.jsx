@@ -1,27 +1,16 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { authContext } from "../context/AuthContext";
-import axios from "axios";
 import PostCard from "../componant/posts/PostCard";
 import Loading from "../componant/Loading";
+import { apiServices } from "../services/api";
 
 export default function PostDetails() {
-  const { token } = useContext(authContext);
   const { postId } = useParams();
-
   const [post, setPost] = useState(null);
 
   async function getPostDetail() {
     try {
-      const { data } = await axios.get(
-        `https://route-posts.routemisr.com/posts/${postId}`,
-        {
-          headers: {
-            token: token,
-          },
-        },
-      );
-
+      const data = await apiServices.getDetailsPost(postId);
       setPost(data.data.post);
       console.log(data.data.post);
     } catch (err) {
@@ -36,9 +25,9 @@ export default function PostDetails() {
   return (
     <div className="min-h-screen py-5 flex flex-col items-center ">
       {post ? (
-        <PostCard post={post} showAllComments={true} />
+        <PostCard post={post} showAllComments={true} getPosts={getPostDetail} />
       ) : (
-      <Loading />
+        <Loading />
       )}
     </div>
   );

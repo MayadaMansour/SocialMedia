@@ -1,22 +1,21 @@
 import { useContext, useRef, useState } from "react";
 import axios from "axios";
 import { authContext } from "../../context/AuthContext";
+import { apiServices } from "../../services/api";
 
-export default function CreatePost({ onPostCreated, user }) {
+export default function CreatePost({ getPosts }) {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-    const { token } = useContext(authContext);
-  
-
+  const { token } = useContext(authContext);
   const fileRef = useRef(null);
+    const { userData } = useContext(authContext);
 
-  // upload image
+
   function handleImage(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     setImage(file);
     setPreview(URL.createObjectURL(file));
   }
@@ -27,29 +26,19 @@ export default function CreatePost({ onPostCreated, user }) {
     if (fileRef.current) fileRef.current.value = "";
   }
 
-  // submit
   async function handleSubmit() {
     if (!text.trim() && !image) return;
-
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append("body", text);
       if (image) formData.append("image", image);
 
-      const { data } = await axios.post(
-        "https://route-posts.routemisr.com/posts",
-        formData,
-        {
-          headers: {
-            token, 
-          },
-        }
-      );
+      const data  = await apiServices.createPost(formData);
 
       setText("");
       removeImage();
-      onPostCreated?.(data?.data?.post);
+      getPosts?.(data?.data?.post);
     } catch (err) {
       console.log(err.response?.data || err.message);
     } finally {
@@ -57,23 +46,21 @@ export default function CreatePost({ onPostCreated, user }) {
     }
   }
 
+  
   const isDisabled = !text.trim() && !image;
 
   return (
-    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4">
-      
+    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 ">
       {/* HEADER */}
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex items-center gap-3 mb-2">
         <img
-          src={user?.photo || "https://i.pravatar.cc/150"}
+          src={userData?.photo || "https://i.pravatar.cc/150"}
           alt="user"
           className="w-11 h-11 rounded-full object-cover"
         />
 
         <div>
-          <p className="font-semibold">
-            {user?.name || "User"}
-          </p>
+          <p className="font-semibold">{userData?.name || "User"}</p>
 
           <div className="bg-gray-100 text-sm px-3 py-1 rounded-full inline-flex items-center gap-1 cursor-pointer hover:bg-gray-200">
             🌍 Public ▾
@@ -85,8 +72,8 @@ export default function CreatePost({ onPostCreated, user }) {
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder={`What's on your mind, ${user?.name || "Mayada"}?`}
-        className="w-full min-h-[80px] resize-none outline-none text-lg placeholder-gray-400"
+        placeholder={`What's on your mind,?`}
+        className="w-full min-h-[50px] resize-none outline-none text-lg placeholder-gray-400"
       />
 
       {/* IMAGE PREVIEW */}
@@ -107,7 +94,7 @@ export default function CreatePost({ onPostCreated, user }) {
         </div>
       )}
 
-      <hr className="my-4" />
+      <hr className="my-3" />
 
       {/* ACTIONS */}
       <div className="flex items-center justify-between">

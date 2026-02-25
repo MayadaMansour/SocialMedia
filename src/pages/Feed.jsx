@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import Posts from "../componant/posts/Posts";
 import CreatePost from "../componant/posts/CreatePost";
 import Loading from "../componant/Loading";
+import { apiServices } from "../services/api";
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -14,16 +14,8 @@ export default function Feed() {
 
   async function getPosts() {
     try {
-      const { data } = await axios.get(
-        "https://route-posts.routemisr.com/posts",
-        {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-        },
-      );
-
-      setPosts(data.data.posts);
+      const response = await apiServices.getPosts();
+      setPosts([...response.data.posts]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -31,16 +23,10 @@ export default function Feed() {
     }
   }
 
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
-    <div className="flex flex-col items-center gap-4  ">
-      <CreatePost
-        onPostCreated={(newPost) => setPosts((prev) => [newPost, ...prev])}
-      />
-      <Posts posts={posts} />
+    <div className="flex flex-col items-center gap-4">
+      <CreatePost getPosts={getPosts} />
+      {loading ? <Loading /> : <Posts posts={posts} getPosts={getPosts} />}
     </div>
   );
 }

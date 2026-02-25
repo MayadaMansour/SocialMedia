@@ -10,8 +10,6 @@ import {
 } from "@heroui/react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-
 import { EyeSlashFilledIcon } from "../componant/password/EyeSlashFilledIcon";
 import { EyeFilledIcon } from "../componant/password/EyeFilledIcon";
 import { getInputProps } from "../helpers/authHelper";
@@ -19,6 +17,7 @@ import { getInputProps } from "../helpers/authHelper";
 import authSideImage from "../assets/login.webp";
 import { useContext } from "react";
 import { authContext } from "../context/AuthContext";
+import { apiServices } from "../services/api";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,15 +35,9 @@ export default function SignIn() {
     setIsLoading(true);
     setErrorMsg("");
     try {
-      const response = await axios.post(
-        "https://route-posts.routemisr.com/users/signin",
-        loginData,
-      );
-
-      console.log("FULL RESPONSE:", response.data);
-      const token = response.data.data.token;
+      const response = await apiServices.signIn(loginData);
+      const token = response.data.token;
       localStorage.setItem("token", token);
-      console.log("Saved token:", localStorage.getItem("token"));
       setUserToken(token);
       addToast({
         title: "Success",
@@ -53,10 +46,12 @@ export default function SignIn() {
       });
     } catch (error) {
       setErrorMsg(error?.response?.data?.error || "Invalid email or password");
+      console.log(error?.response?.data?.error);
     } finally {
       setIsLoading(false);
     }
   }
+
   return (
     <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-xl shadow-2xl">
       <div
