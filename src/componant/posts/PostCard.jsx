@@ -6,9 +6,10 @@ import CommentInput from "./CommentInput";
 import { apiServices } from "../../services/api";
 
 export default function PostCard({ post, showAllComments, getPosts }) {
+
   async function createComment(content) {
     const response = await apiServices.createComment(post._id, content);
-    console.log(response);
+    console.log(response.data.comment);
     if (response.success) {
       await getPosts();
     }
@@ -71,6 +72,7 @@ export default function PostCard({ post, showAllComments, getPosts }) {
         postId={post._id}
         totalComments={post.commentsCount}
         showAll={showAllComments}
+        refresh={post.commentsCount}
       />
     </div>
   );
