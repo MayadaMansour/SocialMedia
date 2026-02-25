@@ -1,13 +1,21 @@
 import { useState } from "react";
 
 export default function CommentInput({ createComment }) {
-  const [comments, setComments] = useState("");
+  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleCommentData() {
-    const formData = new FormData();
-    formData.set("content", comments);
-     await createComment(formData);
-    setComments("");
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.set("content", comment);
+      await createComment(formData);
+      setComment("");
+    } catch (error) {
+      console.log("Comment Error:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -17,19 +25,20 @@ export default function CommentInput({ createComment }) {
           type="text"
           placeholder="Write a comment..."
           className="w-full bg-gray-100 rounded-full pl-4 pr-12 py-2 outline-none text-sm"
-          value={comments}
-          onChange={(e) => setComments(e.target.value)}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          disabled={loading}
         />
 
         <button
           onClick={handleCommentData}
+          disabled={loading}
           className="absolute right-2 text-primary 
-                 w-8 h-8 rounded-full flex items-center justify-center"
+                     w-8 h-8 rounded-full flex items-center justify-center"
         >
-          ➤
+          {loading ? "..." : "➤"}
         </button>
       </div>
     </div>
   );
 }
-
