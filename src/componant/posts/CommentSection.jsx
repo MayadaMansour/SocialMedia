@@ -1,52 +1,62 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { apiServices } from "../../services/api";
+import { useEffect, useState, useContext } from "react";
+import { authContext } from "../../context/AuthContext";
+import CommentList from "./CommentList";
 
-export default function CommentSection({ postId, showAll ,refresh}) {
+export default function CommentSection({
+  postId,
+  showAll,
+  refresh,
+  postOwnerId,
+  getPosts,
+}) {
   const [comments, setComments] = useState([]);
-  
+  const { userData } = useContext(authContext);
+
   async function loadComments() {
     try {
       const response = await apiServices.getPostComments(postId);
       setComments(response.data.comments);
     } catch (err) {
-      console.log("Comments Error:", err.response?.data);
+      console.log("Comments Error:", err);
     }
   }
 
-useEffect(() => {
-  if (!postId) return;
-  loadComments();
-}, [postId,refresh]);
+  async function handleDelete(commentId) {
+    try {
+      await apiServices.deleteComment(postId, commentId);
+      await getPosts();
+    } catch (err) {
+      console.log("Delete Error:", err);
+    }
+  }
+
+  async function handleUpdate(commentId, content) {
+    try {
+      const formData = new FormData();
+      formData.append("content", content);
+      await apiServices.updateComment(postId, commentId, formData);
+      console.log("Updated Successfully");
+      await getPosts();
+    } catch (err) {
+      console.log("Update Error:", err.response?.data || err);
+      throw err;
+    }
+  }
+
+  useEffect(() => {
+    if (!postId) return;
+    loadComments();
+  }, [postId, refresh]);
 
   return (
-    <div className="px-4 pb-3">
-      <div className="space-y-2 mb-2">
-        {(showAll ? comments : comments.slice(0, 2)).map((c) => (
-          <div key={c._id} className="flex gap-2">
-            <img
-              src={c.commentCreator?.photo || "https://i.pravatar.cc/150"}
-              className="w-7 h-7 rounded-full object-cover"
-            />
-
-            <div className="bg-gray-100 rounded-2xl px-3 py-2 text-sm">
-              <span className="font-semibold block">
-                {c.commentCreator?.name}
-              </span>
-              {c.content}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {!showAll && comments.length > 2 && (
-        <Link
-          to={`/post/${postId}`}
-          className="text-sm text-gray-500 hover:underline block"
-        >
-          See more comments
-        </Link>
-      )}
-    </div>
+    <CommentList
+      comments={comments}
+      showAll={showAll}
+      postOwnerId={postOwnerId}
+      onDelete={handleDelete}
+      onUpdate={handleUpdate}
+      userData={userData}
+    />
   );
 }

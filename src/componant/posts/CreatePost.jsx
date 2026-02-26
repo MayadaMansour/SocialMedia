@@ -1,5 +1,4 @@
 import { useContext, useRef, useState } from "react";
-import axios from "axios";
 import { authContext } from "../../context/AuthContext";
 import { apiServices } from "../../services/api";
 
@@ -8,7 +7,6 @@ export default function CreatePost({ getPosts }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { token } = useContext(authContext);
   const fileRef = useRef(null);
     const { userData } = useContext(authContext);
 
