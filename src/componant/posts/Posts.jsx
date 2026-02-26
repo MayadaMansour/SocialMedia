@@ -1,12 +1,8 @@
 import PostCard from "./PostCard";
 
-export default function Posts({ posts, getPosts }) { 
+export default function Posts({ posts, refreshPost }) {
   if (!posts?.length) {
-    return (
-      <p className="text-center text-gray-400 mt-10">
-        No posts yet
-      </p>
-    );
+    return <p className="text-center text-gray-400 mt-10">No posts yet</p>;
   }
 
   return (
@@ -15,7 +11,8 @@ export default function Posts({ posts, getPosts }) {
         <PostCard
           key={post._id}
           post={post}
-          getPosts={getPosts}   
+          showAllComments={false}
+          refreshPost={refreshPost}
         />
       ))}
     </div>

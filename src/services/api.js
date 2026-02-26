@@ -102,19 +102,20 @@ class ApiServices {
 
     return data;
   }
-async updateComment(postId, commentId, formData) {
-  const { data } = await axios.put(
-    `${import.meta.env.VITE_BASE_URL}/posts/${postId}/comments/${commentId}`,
-    formData,
-    {
-      headers: {
-        token: localStorage.getItem("token"),
-      },
-    }
-  );
 
-  return data;
-}
+  async updateComment(postId, commentId, formData) {
+    const { data } = await axios.put(
+      `${import.meta.env.VITE_BASE_URL}/posts/${postId}/comments/${commentId}`,
+      formData,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      },
+    );
+
+    return data;
+  }
 }
 
 export const apiServices = new ApiServices();

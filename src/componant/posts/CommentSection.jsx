@@ -1,3 +1,4 @@
+
 import { apiServices } from "../../services/api";
 import { useEffect, useState, useContext } from "react";
 import { authContext } from "../../context/AuthContext";
@@ -6,12 +7,23 @@ import CommentList from "./CommentList";
 export default function CommentSection({
   postId,
   showAll,
-  refresh,
   postOwnerId,
-  getPosts,
+  initialComments = null,
 }) {
-  const [comments, setComments] = useState([]);
   const { userData } = useContext(authContext);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    if (initialComments) {
+      setComments(initialComments);
+    }
+  }, [initialComments]);
+
+  useEffect(() => {
+    if (!initialComments && postId) {
+      loadComments();
+    }
+  }, [postId, initialComments]);
 
   async function loadComments() {
     try {
@@ -25,7 +37,10 @@ export default function CommentSection({
   async function handleDelete(commentId) {
     try {
       await apiServices.deleteComment(postId, commentId);
-      await getPosts();
+
+      setComments((prev) =>
+        prev.filter((comment) => comment._id !== commentId)
+      );
     } catch (err) {
       console.log("Delete Error:", err);
     }
@@ -34,20 +49,22 @@ export default function CommentSection({
   async function handleUpdate(commentId, content) {
     try {
       const formData = new FormData();
-      formData.append("content", content);
+      formData.set("content", content);
+
       await apiServices.updateComment(postId, commentId, formData);
-      console.log("Updated Successfully");
-      await getPosts();
+
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment._id === commentId
+            ? { ...comment, content }
+            : comment
+        )
+      );
     } catch (err) {
       console.log("Update Error:", err.response?.data || err);
       throw err;
     }
   }
-
-  useEffect(() => {
-    if (!postId) return;
-    loadComments();
-  }, [postId, refresh]);
 
   return (
     <CommentList

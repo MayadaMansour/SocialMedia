@@ -4,18 +4,28 @@ import PostStats from "./PostStats";
 import CommentSection from "./CommentSection";
 import CommentInput from "./CommentInput";
 import { apiServices } from "../../services/api";
+import { Link } from "react-router-dom";
 
-export default function PostCard({ post, showAllComments, getPosts }) {
+export default function PostCard({
+  post,
+  showAllComments,
+  refreshPost,
+}) {
   async function createComment(content) {
     const response = await apiServices.createComment(post._id, content);
+
     if (response.success) {
-      await getPosts();
+      await refreshPost();
     }
   }
 
+  const hasMoreComments =
+    post.commentsCount > 1 && !showAllComments;
+
   return (
     <div className="bg-white rounded-xl shadow w-full max-w-2xl overflow-hidden">
-      <PostHeader post={post} getPosts={getPosts} />
+      
+      <PostHeader post={post} refreshPost={refreshPost} />
 
       <PostContent post={post} />
 
@@ -26,10 +36,23 @@ export default function PostCard({ post, showAllComments, getPosts }) {
       <CommentSection
         postId={post._id}
         showAll={showAllComments}
-        refresh={post.commentsCount}
         postOwnerId={post.user._id}
-        getPosts={getPosts}
+        initialComments={
+          showAllComments
+            ? null
+            : post.topComment
+              ? [post.topComment]  
+              : []
+        }
       />
+      {hasMoreComments && (
+        <Link
+          to={`/post/${post._id}`}
+          className="block px-4 py-2 text-sm text-gray-500 hover:text-blue-600 hover:underline"
+        >
+          See all  comments
+        </Link>
+      )}
     </div>
   );
 }

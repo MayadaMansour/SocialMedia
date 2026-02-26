@@ -8,8 +8,7 @@ export default function CreatePost({ getPosts }) {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileRef = useRef(null);
-    const { userData } = useContext(authContext);
-
+  const { userData } = useContext(authContext);
 
   function handleImage(e) {
     const file = e.target.files[0];
@@ -32,7 +31,7 @@ export default function CreatePost({ getPosts }) {
       formData.append("body", text);
       if (image) formData.append("image", image);
 
-      const data  = await apiServices.createPost(formData);
+      const data = await apiServices.createPost(formData);
 
       setText("");
       removeImage();
@@ -44,21 +43,20 @@ export default function CreatePost({ getPosts }) {
     }
   }
 
-  
   const isDisabled = !text.trim() && !image;
 
   return (
-    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 ">
+    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 mt-3 ">
       {/* HEADER */}
       <div className="flex items-center gap-3 mb-2">
         <img
-          src={userData?.photo || "https://i.pravatar.cc/150"}
+          src={userData?.photo}
           alt="user"
           className="w-11 h-11 rounded-full object-cover"
         />
 
         <div>
-          <p className="font-semibold">{userData?.name || "User"}</p>
+          <p className="font-semibold">{userData?.name}</p>
 
           <div className="bg-gray-100 text-sm px-3 py-1 rounded-full inline-flex items-center gap-1 cursor-pointer hover:bg-gray-200">
             🌍 Public ▾

@@ -5,7 +5,6 @@ export default function CommentMenu({
   onDelete,
   onUpdate,
 }) {
-
   async function handleDeleteClick() {
     try {
       await onDelete();
@@ -16,7 +15,7 @@ export default function CommentMenu({
   }
 
   function handleEditClick() {
-    onUpdate();       
+    onUpdate();
     setOpenMenu(false);
   }
 
@@ -34,11 +33,11 @@ export default function CommentMenu({
       </button>
 
       {openMenu && (
-        <div className="absolute right-0 mt-1 w-28 bg-white border rounded-lg shadow-md text-sm z-20">
+        <div className="absolute right-0  w-20 bg-white border rounded-s shadow-lg text-xs z-60">
           {isMyComment && (
             <button
               onClick={handleEditClick}
-              className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+              className="block w-full text-left px-2 py-1.5 hover:bg-gray-100"
             >
               Edit
             </button>
@@ -46,7 +45,7 @@ export default function CommentMenu({
 
           <button
             onClick={handleDeleteClick}
-            className="block w-full text-left px-3 py-2 hover:bg-red-50 text-red-600"
+            className="block w-full text-left px-2 py-1.5 hover:bg-red-50 text-red-600"
           >
             Delete
           </button>

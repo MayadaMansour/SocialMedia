@@ -26,7 +26,7 @@ export default function Feed() {
   return (
     <div className="flex flex-col items-center gap-4">
       <CreatePost getPosts={getPosts} />
-      {loading ? <Loading /> : <Posts posts={posts} getPosts={getPosts} />}
+      {loading ? <Loading /> : <Posts posts={posts} refreshPost={getPosts} />}
     </div>
   );
 }

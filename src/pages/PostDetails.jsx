@@ -25,7 +25,11 @@ export default function PostDetails() {
   return (
     <div className="min-h-screen py-5 flex flex-col items-center ">
       {post ? (
-        <PostCard post={post} showAllComments={true} getPosts={getPostDetail} />
+        <PostCard
+          post={post}
+          showAllComments={true}
+          refreshPost={getPostDetail}
+        />
       ) : (
         <Loading />
       )}

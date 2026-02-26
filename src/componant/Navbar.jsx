@@ -28,7 +28,7 @@ export default function NavbarSection() {
       {/* LOGO */}
       <NavbarBrand>
         <Link to="/">
-          <p className="font-bold text-xl text-primary">CIRCLE</p>
+          <p className="font-bold text-xl text-primary-700">CIRCLE</p>
         </Link>
       </NavbarBrand>
 
@@ -43,7 +43,7 @@ export default function NavbarSection() {
               color="secondary"
               name={userData?.name}
               size="sm"
-              src={userData?.photo || "https://i.pravatar.cc/150"}
+              src={userData?.photo }
             />
           </DropdownTrigger>
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import CommentMenu from "./CommentMenu";
 import { Input } from "@heroui/react";
 
@@ -13,19 +13,11 @@ export default function CommentItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(comment.content);
   const [loading, setLoading] = useState(false);
-
-  const inputRef = useRef(null);
-
   const isMyComment =
     String(comment.commentCreator?._id) === String(userData?._id);
+  const isPostOwner =
+    String(postOwnerId) === String(userData?._id);
 
-  const isPostOwner = String(postOwnerId) === String(userData?._id);
-
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
 
   useEffect(() => {
     setEditedText(comment.content);
@@ -36,7 +28,7 @@ export default function CommentItem({
     try {
       setLoading(true);
       await onUpdate(comment._id, editedText);
-       setIsEditing(false);
+      setIsEditing(false);
     } catch (error) {
       console.log("Update Error:", error);
     } finally {
@@ -68,7 +60,7 @@ export default function CommentItem({
           ) : (
             <div className="mt-2 space-y-2">
               <Input
-                ref={inputRef}
+                autoFocus
                 type="text"
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
