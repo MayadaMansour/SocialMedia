@@ -149,6 +149,29 @@ class ApiServices {
 
     return data;
   }
+
+  async getProfile(userId) {
+    const { data } = await axios.get(
+      import.meta.env.VITE_BASE_URL + "/users/" + userId + "/profile",
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      },
+    );
+    return data;
+  }
+   async getProfilePosts(userId) {
+    const { data } = await axios.get(
+      import.meta.env.VITE_BASE_URL + "/users/" + userId + "/posts",
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      },
+    );
+    return data;
+  }
 }
 
 export const apiServices = new ApiServices();
