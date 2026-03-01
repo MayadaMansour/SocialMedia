@@ -1,18 +1,32 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { authContext } from "../../context/AuthContext";
 import { apiServices } from "../../services/api";
 
-export default function CreatePost({ getPosts }) {
+export default function CreatePost({ getPosts, editPost, cancelEdit }) {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const fileRef = useRef(null);
   const { userData } = useContext(authContext);
+
+  useEffect(() => {
+    if (editPost) {
+      setText(editPost.body || "");
+      setPreview(editPost.image || null);
+    }
+  }, [editPost]);
 
   function handleImage(e) {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please choose a valid image");
+      return;
+    }
+
     setImage(file);
     setPreview(URL.createObjectURL(file));
   }
@@ -26,16 +40,16 @@ export default function CreatePost({ getPosts }) {
   async function handleSubmit() {
     if (!text.trim() && !image) return;
     try {
-      setLoading(true);
+      setLoading(true)
       const formData = new FormData();
       formData.append("body", text);
-      if (image) formData.append("image", image);
-
+      if (image instanceof File) {
+        formData.append("image", image);
+      }
       const data = await apiServices.createPost(formData);
-
       setText("");
       removeImage();
-      getPosts?.(data?.data?.post);
+      getPosts?.();
     } catch (err) {
       console.log(err.response?.data || err.message);
     } finally {
@@ -46,8 +60,7 @@ export default function CreatePost({ getPosts }) {
   const isDisabled = !text.trim() && !image;
 
   return (
-    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 mt-3 ">
-      {/* HEADER */}
+    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 mt-3">
       <div className="flex items-center gap-3 mb-2">
         <img
           src={userData?.photo}
@@ -64,15 +77,13 @@ export default function CreatePost({ getPosts }) {
         </div>
       </div>
 
-      {/* TEXTAREA */}
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder={`What's on your mind,?`}
+        placeholder={`What's on your mind?`}
         className="w-full min-h-[50px] resize-none outline-none text-lg placeholder-gray-400"
       />
 
-      {/* IMAGE PREVIEW */}
       {preview && (
         <div className="relative mt-3">
           <img
@@ -92,7 +103,6 @@ export default function CreatePost({ getPosts }) {
 
       <hr className="my-3" />
 
-      {/* ACTIONS */}
       <div className="flex items-center justify-between">
         <div className="flex gap-6 text-gray-600">
           <button
@@ -100,10 +110,6 @@ export default function CreatePost({ getPosts }) {
             className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-lg"
           >
             🖼️ Photo/video
-          </button>
-
-          <button className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-lg">
-            😊 Feeling/activity
           </button>
         </div>
 
@@ -117,7 +123,13 @@ export default function CreatePost({ getPosts }) {
                 : "bg-blue-500 hover:bg-blue-600 text-white"
             }`}
         >
-          {loading ? "Posting..." : "Post"} ➤
+          {loading
+            ? editPost
+              ? "Updating..."
+              : "Posting..."
+            : editPost
+              ? "Update"
+              : "Post"}
         </button>
       </div>
 

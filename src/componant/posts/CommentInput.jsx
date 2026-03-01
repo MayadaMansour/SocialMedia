@@ -4,19 +4,20 @@ export default function CommentInput({ createComment }) {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleCommentData() {
-    try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.set("content", comment);
-      await createComment(formData);
-      setComment("");
-    } catch (error) {
-      console.log("Comment Error:", error);
-    } finally {
-      setLoading(false);
-    }
+async function handleCommentData() {
+  if (!comment.trim()) return;
+  try {
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("content", comment);
+    await createComment(formData);
+    setComment("");
+  } catch (error) {
+    console.log("Comment Error:", error);
+  } finally {
+    setLoading(false); 
   }
+}
 
   return (
     <div className="px-4 py-4">
@@ -33,8 +34,7 @@ export default function CommentInput({ createComment }) {
         <button
           onClick={handleCommentData}
           disabled={loading}
-          className="absolute right-2 text-primary 
-                     w-8 h-8 rounded-full flex items-center justify-center"
+          className="absolute right-2 text-primary w-8 h-8 rounded-full flex items-center justify-center"
         >
           {loading ? "..." : "➤"}
         </button>

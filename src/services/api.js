@@ -83,6 +83,7 @@ class ApiServices {
       {
         headers: {
           token: localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data",
         },
       },
     );
@@ -106,6 +107,38 @@ class ApiServices {
   async updateComment(postId, commentId, formData) {
     const { data } = await axios.put(
       `${import.meta.env.VITE_BASE_URL}/posts/${postId}/comments/${commentId}`,
+      formData,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      },
+    );
+
+    return data;
+  }
+
+  async deletePost(postId) {
+    try {
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_BASE_URL}/posts/${postId}`,
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        },
+      );
+
+      return data;
+    } catch (error) {
+      console.log("DELETE ERROR:", error.response?.data);
+      throw error;
+    }
+  }
+
+  async updatePost(postId, formData) {
+    const { data } = await axios.put(
+      `${import.meta.env.VITE_BASE_URL}/posts/${postId}`,
       formData,
       {
         headers: {

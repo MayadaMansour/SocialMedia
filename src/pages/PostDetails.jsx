@@ -12,7 +12,6 @@ export default function PostDetails() {
     try {
       const data = await apiServices.getDetailsPost(postId);
       setPost(data.data.post);
-      console.log(data.data.post);
     } catch (err) {
       console.log(err);
     }
@@ -23,12 +22,13 @@ export default function PostDetails() {
   }, []);
 
   return (
-    <div className="min-h-screen py-5 flex flex-col items-center ">
+    <div className="min-h-screen py-5 flex flex-col items-center">
       {post ? (
         <PostCard
           post={post}
           showAllComments={true}
           refreshPost={getPostDetail}
+          isDetails={true}   
         />
       ) : (
         <Loading />
