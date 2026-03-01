@@ -161,15 +161,29 @@ class ApiServices {
     );
     return data;
   }
-   async getProfilePosts(userId) {
+  async getProfilePosts(userId) {
     const { data } = await axios.get(
-      import.meta.env.VITE_BASE_URL + "/users/" + userId + "/posts",
+      `${import.meta.env.VITE_BASE_URL}/users/${userId}/posts`,
       {
         headers: {
           token: localStorage.getItem("token"),
         },
       },
     );
+
+    return data;
+  }
+  async changePassword(passwordData) {
+    const { data } = await axios.patch(
+      import.meta.env.VITE_BASE_URL + "/users/change-password",
+      passwordData,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      },
+    );
+
     return data;
   }
 }

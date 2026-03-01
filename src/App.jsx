@@ -12,7 +12,8 @@ import NotFound from "./pages/NotFound";
 import ProtectedRouter from "./protectedRouter/ProtectedRouter";
 import ProtectedAuthRouter from "./protectedRouter/ProtectedAuthRouter";
 import AuthContextProvider from "./context/AuthContext";
-import PostDetails from './pages/PostDetails';
+import PostDetails from "./pages/PostDetails";
+import Setting from "./pages/Setting";
 
 const router = createBrowserRouter([
   {
@@ -56,7 +57,15 @@ const router = createBrowserRouter([
           </ProtectedRouter>
         ),
       },
-       {
+      {
+        path: "setting",
+        element: (
+          <ProtectedRouter>
+            <Setting />
+          </ProtectedRouter>
+        ),
+      },
+      {
         path: "post/:postId",
         element: (
           <ProtectedRouter>

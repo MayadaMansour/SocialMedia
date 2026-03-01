@@ -43,15 +43,22 @@ export default function NavbarSection() {
               color="secondary"
               name={userData?.name}
               size="sm"
-              src={userData?.photo }
+              src={userData?.photo}
             />
           </DropdownTrigger>
 
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
+            <DropdownItem key="logout" color="primary" onClick={logout}>
+              {userData?.email}
+            </DropdownItem>
+            <DropdownItem key="profile">
               <Link to="/profile">
-                <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold text-primary">{userData?.email}</p>
+                <p className="font-semibold text-primary">Profile</p>
+              </Link>
+            </DropdownItem>
+            <DropdownItem key="profile">
+              <Link to="/setting">
+                <p className="font-semibold text-gray-400">Setting</p>
               </Link>
             </DropdownItem>
 
