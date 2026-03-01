@@ -14,6 +14,7 @@ export default function ProfilePosts() {
   async function getMyPosts() {
     try {
       const response = await apiServices.getProfilePosts(userData._id);
+      console.log(userData._id)
 
       setPosts(response.data.posts);
     } catch (error) {

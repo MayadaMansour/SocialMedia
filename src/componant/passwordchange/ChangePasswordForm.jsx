@@ -6,7 +6,6 @@ import { addToast } from "@heroui/react";
 import { authContext } from "../../context/AuthContext";
 
 export default function ChangePasswordForm() {
-
   const navigate = useNavigate();
   const { setUserToken, getUserData } = useContext(authContext);
 
@@ -63,18 +62,14 @@ export default function ChangePasswordForm() {
       setRePassword("");
 
       setTimeout(() => {
-        navigate("/profile");
+        navigate("/");
       }, 1200);
-
     } catch (error) {
-
       addToast({
         title: "Error",
-        description:
-          error.response?.data?.message || "Error updating password",
+        description: error.response?.data?.message || "Error updating password",
         color: "danger",
       });
-
     } finally {
       setLoading(false);
     }
@@ -82,13 +77,9 @@ export default function ChangePasswordForm() {
 
   return (
     <div className="bg-white shadow-lg rounded-xl p-6 max-w-md w-full">
-
-      <h2 className="text-lg font-semibold mb-5">
-        Change Password
-      </h2>
+      <h2 className="text-lg font-semibold mb-5">Change Password</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
         <PasswordInput
           label="Current Password"
           value={currentPassword}
@@ -110,13 +101,14 @@ export default function ChangePasswordForm() {
         <button
           disabled={loading}
           className={`mt-2 py-2 rounded-lg text-white font-medium transition
-          ${loading
-            ? "bg-blue-300 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"}`}
+          ${
+            loading
+              ? "bg-blue-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
           {loading ? "Updating..." : "Change Password"}
         </button>
-
       </form>
     </div>
   );

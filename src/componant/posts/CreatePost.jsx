@@ -40,7 +40,7 @@ export default function CreatePost({ getPosts, editPost, cancelEdit }) {
   async function handleSubmit() {
     if (!text.trim() && !image) return;
     try {
-      setLoading(true)
+      setLoading(true);
       const formData = new FormData();
       formData.append("body", text);
       if (image instanceof File) {
@@ -60,7 +60,7 @@ export default function CreatePost({ getPosts, editPost, cancelEdit }) {
   const isDisabled = !text.trim() && !image;
 
   return (
-    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 mt-3">
+    <div className="bg-white rounded-2xl shadow w-full max-w-2xl p-4 m-3">
       <div className="flex items-center gap-3 mb-2">
         <img
           src={userData?.photo}

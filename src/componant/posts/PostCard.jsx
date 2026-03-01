@@ -67,7 +67,7 @@ export default function PostCard({
   const hasMoreComments = post.commentsCount > 1 && !showAllComments;
 
   return (
-    <div className="bg-white rounded-xl shadow w-full max-w-2xl overflow-hidden">
+    <div className="bg-white rounded-xl shadow w-full max-w-2xl overflow-hidden my-3">
       <PostHeader
         post={post}
         refreshPost={refreshPost}
